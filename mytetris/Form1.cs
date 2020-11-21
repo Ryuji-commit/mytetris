@@ -34,6 +34,9 @@ namespace mytetris
         int blockSideLength;
         int[][] blockPosition;
         List<int[]> stackedBlockPosition;
+        List<List<Brush>> brushList;
+        Brush myBlockBrush;
+
         public const int frameLimitX = 10;
         public const int frameLimitY = 20;
 
@@ -43,22 +46,23 @@ namespace mytetris
             this.Height = 2 * this.Width;
             this.blockSideLength = this.Width / 18;
             this.board = new List<List<Rectangle>>();
-            this.blockPosition = new int[][]
-            {
-                new int[] {3, 0},
-                new int[] {3, 1},
-                new int[] {3, 2},
-            };
             this.stackedBlockPosition = new List<int[]>();
+            this.brushList = new List<List<Brush>>();
+            this.myBlockBrush = Brushes.Black;
+
+            SetOperatingBlockPosition();
 
             for (int y = 0; y < MyTetrisForm.frameLimitY; y += 1)
             {
                 List<Rectangle> line = new List<Rectangle>();
+                List<Brush> lineOfBrushList = new List<Brush>();
                 for (int x = 0; x < MyTetrisForm.frameLimitX; x++)
                 {
                     line.Add(new Rectangle(x * blockSideLength, y * blockSideLength, blockSideLength, blockSideLength));
+                    lineOfBrushList.Add(Brushes.Black);
                 }
                 this.board.Add(line);
+                this.brushList.Add(lineOfBrushList);
             }
 
             Timer timer = new Timer
@@ -87,7 +91,7 @@ namespace mytetris
                     int[] point = new int[] { x, y };
                     if (IsContainesPoint(point) || this.stackedBlockPosition.Contains(point, comparer))
                     {
-                        e.Graphics.FillRectangle(Brushes.DeepSkyBlue, this.board[y][x]);
+                        e.Graphics.FillRectangle(this.brushList[y][x], this.board[y][x]);
                         e.Graphics.DrawRectangle(blackPen, this.board[y][x]);
                     }
                     else
@@ -195,8 +199,11 @@ namespace mytetris
 
             for (oneDimensionalIndex = 0; oneDimensionalIndex < copyBlockPosition.GetLength(0); oneDimensionalIndex++)
             {
-                copyBlockPosition[oneDimensionalIndex][0] = originalBlockPosition[oneDimensionalIndex][0];
-                copyBlockPosition[oneDimensionalIndex][1] = originalBlockPosition[oneDimensionalIndex][1];
+                int[] sepBlockPosition = originalBlockPosition[oneDimensionalIndex];
+                copyBlockPosition[oneDimensionalIndex][0] = sepBlockPosition[0];
+                copyBlockPosition[oneDimensionalIndex][1] = sepBlockPosition[1];
+
+                SetBrushesToBrushList(sepBlockPosition);
             }
         }
 
@@ -204,15 +211,12 @@ namespace mytetris
         {
             for (int oneDimensionalIndex = 0; oneDimensionalIndex < this.blockPosition.GetLength(0); oneDimensionalIndex++)
             {
-                this.stackedBlockPosition.Add(this.blockPosition[oneDimensionalIndex]);
+                int[] sepBlockPosition = this.blockPosition[oneDimensionalIndex];
+                this.stackedBlockPosition.Add(sepBlockPosition);
+                SetBrushesToBrushList(sepBlockPosition);
             }
             EraseStackedBlocks();
-            this.blockPosition = new int[][]
-            {
-                new int[] {3, 0},
-                new int[] {3, 1},
-                new int[] {3, 2},
-            };
+            SetOperatingBlockPosition();
         }
 
         private void EraseStackedBlocks()
@@ -233,6 +237,91 @@ namespace mytetris
                         Invalidate();
                     }
                 }
+            }
+        }
+
+        private void SetBrushesToBrushList(int[] sepBlockPosition)
+        {
+            int positionY = sepBlockPosition[1];
+            int positionX = sepBlockPosition[0];
+            this.brushList[positionY][positionX] = this.myBlockBrush;
+        }
+
+        private void SetOperatingBlockPosition()
+        {
+            Random randIndex = new System.Random();
+            switch (randIndex.Next(0, 7))
+            {
+                case 0:
+                    this.blockPosition = new int[][]
+                    {
+                        new int[] {3, 0},
+                        new int[] {3, 1},
+                        new int[] {3, 2},
+                        new int[] {3, 3},
+                    };
+                    this.myBlockBrush = Brushes.DeepSkyBlue;
+                    break;
+                case 1:
+                    this.blockPosition = new int[][]
+                    {
+                        new int[] {3, 0},
+                        new int[] {3, 1},
+                        new int[] {3, 2},
+                        new int[] {4, 1},
+                    };
+                    this.myBlockBrush = Brushes.DeepPink;
+                    break;
+                case 2:
+                    this.blockPosition = new int[][]
+                    {
+                        new int[] {3, 0},
+                        new int[] {3, 1},
+                        new int[] {3, 2},
+                        new int[] {4, 0},
+                    };
+                    this.myBlockBrush = Brushes.LightSkyBlue;
+                    break;
+                case 3:
+                    this.blockPosition = new int[][]
+                    {
+                        new int[] {3, 0},
+                        new int[] {3, 1},
+                        new int[] {3, 2},
+                        new int[] {4, 2},
+                    };
+                    this.myBlockBrush = Brushes.Orange;
+                    break;
+                case 4:
+                    this.blockPosition = new int[][]
+                    {
+                        new int[] {3, 0},
+                        new int[] {3, 1},
+                        new int[] {4, 0},
+                        new int[] {4, 1},
+                    };
+                    this.myBlockBrush = Brushes.LightYellow;
+                    break;
+                case 5:
+                    this.blockPosition = new int[][]
+                    {
+                        new int[] {3, 0},
+                        new int[] {4, 0},
+                        new int[] {4, 1},
+                        new int[] {5, 1},
+                    };
+                    this.myBlockBrush = Brushes.Red;
+                    break;
+                case 6:
+                    this.blockPosition = new int[][]
+                    {
+                        new int[] {3, 1},
+                        new int[] {4, 1},
+                        new int[] {4, 0},
+                        new int[] {4, 2},
+                    };
+                    this.myBlockBrush = Brushes.LightGreen;
+                    break;
             }
         }
     }
