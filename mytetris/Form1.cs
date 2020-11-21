@@ -89,9 +89,14 @@ namespace mytetris
                 for (int x = 0; x < MyTetrisForm.frameLimitX; x += 1)
                 {
                     int[] point = new int[] { x, y };
-                    if (IsContainesPoint(point) || this.stackedBlockPosition.Contains(point, comparer))
+                    if (this.stackedBlockPosition.Contains(point, comparer))
                     {
                         e.Graphics.FillRectangle(this.brushList[y][x], this.board[y][x]);
+                        e.Graphics.DrawRectangle(blackPen, this.board[y][x]);
+                    }
+                    else if (IsContainesPoint(point))
+                    {
+                        e.Graphics.FillRectangle(myBlockBrush, this.board[y][x]);
                         e.Graphics.DrawRectangle(blackPen, this.board[y][x]);
                     }
                     else
@@ -202,8 +207,6 @@ namespace mytetris
                 int[] sepBlockPosition = originalBlockPosition[oneDimensionalIndex];
                 copyBlockPosition[oneDimensionalIndex][0] = sepBlockPosition[0];
                 copyBlockPosition[oneDimensionalIndex][1] = sepBlockPosition[1];
-
-                SetBrushesToBrushList(sepBlockPosition);
             }
         }
 
