@@ -224,6 +224,8 @@ namespace mytetris
 
         private void EraseStackedBlocks()
         {
+            int erasedRowNumber = 0;
+            int topErasedRowNumber = 0;
             ParameterComparer comparer = new ParameterComparer();
             for (int indexY = MyTetrisForm.frameLimitY; indexY >= 0; indexY--)
             {
@@ -237,10 +239,29 @@ namespace mytetris
                     if ( indexX == MyTetrisForm.frameLimitX - 1 )
                     {
                         this.stackedBlockPosition = this.stackedBlockPosition.Where(sepBlockPoint => sepBlockPoint[1] != indexY).ToList();
+                        erasedRowNumber += 1;
+                        topErasedRowNumber = indexY;
                         Invalidate();
+                        DropStackedBlocks(erasedRowNumber, topErasedRowNumber);
                     }
                 }
             }
+        }
+
+        private void DropStackedBlocks(int erasedRowNumber, int topErasedRowNumber)
+        {
+            foreach(var sepBlockPosition in this.stackedBlockPosition)
+            {
+                if (sepBlockPosition[1] < topErasedRowNumber)
+                {
+                    int PositionX = sepBlockPosition[0];
+                    int PositionY = sepBlockPosition[1];
+                    Brush dropBlocksBrush = this.brushList[PositionY][PositionX];
+                    sepBlockPosition[1] += erasedRowNumber;
+                    this.brushList[PositionY + erasedRowNumber][PositionX] = dropBlocksBrush;
+                }
+            }
+            Invalidate();
         }
 
         private void SetBrushesToBrushList(int[] sepBlockPosition)
@@ -303,7 +324,7 @@ namespace mytetris
                         new int[] {4, 0},
                         new int[] {4, 1},
                     };
-                    this.myBlockBrush = Brushes.LightYellow;
+                    this.myBlockBrush = Brushes.Chocolate;
                     break;
                 case 5:
                     this.blockPosition = new int[][]
