@@ -141,7 +141,7 @@ namespace mytetris
             return false;
         }
 
-        private bool IsOperatingBlockInsideFrame(int[][] operatingBlockPosition, int yMovingDistance)
+        private bool IsOperatingBlockInsideFrame(int[][] operatingBlockPosition, int yMovingDistance, bool isBlockInitial = false)
         {
             ParameterComparer comparer = new ParameterComparer();
             for (int oneDimensionalIndex = 0; oneDimensionalIndex < operatingBlockPosition.GetLength(0); oneDimensionalIndex++)
@@ -160,6 +160,11 @@ namespace mytetris
 
                 if (this.stackedBlockPosition.Contains(sepBlockPosition, comparer))
                 {
+                    if (isBlockInitial)
+                    {
+                        return false;
+                    }
+
                     if (yMovingDistance > 0) //縦方向の移動
                     {
                         StackOperatingBlockPosition();
@@ -271,6 +276,11 @@ namespace mytetris
             this.brushList[positionY][positionX] = this.myBlockBrush;
         }
 
+        private bool IsGameOver()
+        {
+            return !IsOperatingBlockInsideFrame(this.blockPosition, 1, true);
+        }
+
         private void SetOperatingBlockPosition()
         {
             Random randIndex = new System.Random();
@@ -346,6 +356,10 @@ namespace mytetris
                     };
                     this.myBlockBrush = Brushes.LightGreen;
                     break;
+            }
+            if (IsGameOver())
+            {
+                this.Close();
             }
         }
     }
