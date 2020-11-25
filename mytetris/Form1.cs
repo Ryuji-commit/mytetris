@@ -12,22 +12,6 @@ using System.Collections;
 
 namespace mytetris
 {
-    public class ParameterComparer : IEqualityComparer<int[]>
-    {
-        public bool Equals(int[] original, int[] comparison)
-        {
-            if (original[0] == comparison[0] && original[1] == comparison[1])
-            {
-                return true;
-            }
-            return false;
-        }
-        public int GetHashCode(int[] i_obj)
-        {
-            return i_obj[0] ^ i_obj[1].GetHashCode();
-        }
-    }
-
     public partial class MyTetrisForm : Form
     {
         List<List<Rectangle>> board;
@@ -40,6 +24,8 @@ namespace mytetris
         public const int frameLimitX = 10;
         public const int frameLimitY = 20;
 
+        public int score;
+
         public MyTetrisForm()
         {
             InitializeComponent();
@@ -49,6 +35,7 @@ namespace mytetris
             this.stackedBlockPosition = new List<int[]>();
             this.brushList = new List<List<Brush>>();
             this.myBlockBrush = Brushes.Black;
+            this.score = 0;
 
             SetOperatingBlockPosition();
 
@@ -246,11 +233,13 @@ namespace mytetris
                         this.stackedBlockPosition = this.stackedBlockPosition.Where(sepBlockPoint => sepBlockPoint[1] != indexY).ToList();
                         erasedRowNumber += 1;
                         topErasedRowNumber = indexY;
-                        Invalidate();
-                        DropStackedBlocks(erasedRowNumber, topErasedRowNumber);
                     }
                 }
             }
+            Invalidate();
+            DropStackedBlocks(erasedRowNumber, topErasedRowNumber);
+            this.score += (100 * erasedRowNumber);
+            this.ScoreLabel.Text = this.score.ToString();
         }
 
         private void DropStackedBlocks(int erasedRowNumber, int topErasedRowNumber)
@@ -361,6 +350,22 @@ namespace mytetris
             {
                 this.Close();
             }
+        }
+    }
+
+    public class ParameterComparer : IEqualityComparer<int[]>
+    {
+        public bool Equals(int[] original, int[] comparison)
+        {
+            if (original[0] == comparison[0] && original[1] == comparison[1])
+            {
+                return true;
+            }
+            return false;
+        }
+        public int GetHashCode(int[] i_obj)
+        {
+            return i_obj[0] ^ i_obj[1].GetHashCode();
         }
     }
 }

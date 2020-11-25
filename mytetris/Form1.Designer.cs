@@ -28,13 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.ScoreLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
+            // 
+            // ScoreLabel
+            // 
+            this.ScoreLabel.Location = new System.Drawing.Point(744, 62);
+            this.ScoreLabel.Name = "ScoreLabel";
+            this.ScoreLabel.Size = new System.Drawing.Size(37, 21);
+            this.ScoreLabel.TabIndex = 0;
+            this.ScoreLabel.Text = "0";
             // 
             // MyTetrisForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(836, 736);
+            this.Controls.Add(this.ScoreLabel);
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.Name = "MyTetrisForm";
@@ -46,6 +56,8 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Label ScoreLabel;
     }
 }
 
